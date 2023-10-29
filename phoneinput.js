@@ -1,48 +1,46 @@
 document.addEventListener("DOMContentLoaded", function () {
-    var phoneInputs = document.querySelectorAll('input[data-tel-input]');
+    let phoneInputs = document.querySelectorAll('input[data-tel-input]');
 
-    var getInputNumbersValue = function (input) {
-        // Return stripped input value — just numbers
+    let getInputNumbersValue = function (input) {
         return input.value.replace(/\D/g, '');
     }
 
-    var onPhonePaste = function (e) {
-        var input = e.target,
+    let onPhonePaste = function (e) {
+        let input = e.target,
             inputNumbersValue = getInputNumbersValue(input);
-        var pasted = e.clipboardData || window.clipboardData;
+        let pasted = e.clipboardData || window.clipboardData;
         if (pasted) {
-            var pastedText = pasted.getData('Text');
+            let pastedText = pasted.getData('Text');
             if (/\D/g.test(pastedText)) {
-                // Attempt to paste non-numeric symbol — remove all non-numeric symbols,
-                // formatting will be in onPhoneInput handler
                 input.value = inputNumbersValue;
+                input.style.borderColor = '#ccc';
                 return;
             }
         }
     }
 
-    var onPhoneInput = function (e) {
-        var input = e.target,
+    let onPhoneInput = function (e) {
+        let input = e.target,
             inputNumbersValue = getInputNumbersValue(input),
             selectionStart = input.selectionStart,
             formattedInputValue = "";
 
         if (!inputNumbersValue) {
+            input.style.borderColor = '#ccc';
             return input.value = "";
         }
 
         if (input.value.length != selectionStart) {
-            // Editing in the middle of input, not last symbol
             if (e.data && /\D/g.test(e.data)) {
-                // Attempt to input non-numeric symbol
                 input.value = inputNumbersValue;
             }
+            input.style.borderColor = '#ccc';
             return;
         }
 
         if (["7", "8", "9"].indexOf(inputNumbersValue[0]) > -1) {
             if (inputNumbersValue[0] == "9") inputNumbersValue = "7" + inputNumbersValue;
-            var firstSymbols = (inputNumbersValue[0] == "8") ? "8" : "+7";
+            let firstSymbols = (inputNumbersValue[0] == "8") ? "8" : "+7";
             formattedInputValue = input.value = firstSymbols + " ";
             if (inputNumbersValue.length > 1) {
                 formattedInputValue += '(' + inputNumbersValue.substring(1, 4);
@@ -59,18 +57,69 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             formattedInputValue = '+' + inputNumbersValue.substring(0, 16);
         }
+        input.style.borderColor = '#ccc';
         input.value = formattedInputValue;
     }
-    var onPhoneKeyDown = function (e) {
-        // Clear input after remove last symbol
-        var inputValue = e.target.value.replace(/\D/g, '');
+    let onPhoneKeyDown = function (e) {
+        let inputValue = e.target.value.replace(/\D/g, '');
         if (e.keyCode == 8 && inputValue.length == 1) {
             e.target.value = "";
         }
+        e.target.style.borderColor = '#ccc';
     }
-    for (var phoneInput of phoneInputs) {
+
+    for (let phoneInput of phoneInputs) {
         phoneInput.addEventListener('keydown', onPhoneKeyDown);
         phoneInput.addEventListener('input', onPhoneInput, false);
         phoneInput.addEventListener('paste', onPhonePaste, false);
     }
 })
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelector('input').focus();
+})
+
+function addError(error, nameError){
+    error.innerText = nameError;
+    error.style.border = '2px solid red';
+    setTimeout(() => {
+        error.innerText = '';
+        error.style.border = 'none';
+        document.querySelector('.error_container').classList.remove('active')
+    }, 5000)
+}
+
+function isValidPhoneNumber() {
+
+    const telElement = document.querySelectorAll('input[data-tel-input]')[0],
+          tel = telElement.value.replace(/\D/gi, ''),
+          phoneNumberMask = /^(?:7|8)\d{10}$/,
+          errorItem = document.getElementById('error_content');
+    
+    if(!tel){
+        addError(errorItem, 'Please enter phone number');
+        telElement.style.borderColor = 'red';
+        errorItem.classList.add('active');
+        return;
+    } 
+    
+    if(tel.length < 11){
+        addError(errorItem, 'Please enter full phone number');
+        telElement.style.borderColor = 'red';
+        errorItem.classList.add('active');
+        return;
+    }
+
+
+    if(phoneNumberMask.test(tel)){
+        addError(errorItem, 'valid phone number');
+        telElement.style.borderColor = '#ccc';
+        return;
+    }else{
+        addError(errorItem, 'invalid phone number');
+        telElement.style.borderColor = 'red';
+        errorItem.classList.add('active');
+        return;
+    }
+}

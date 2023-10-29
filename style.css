@@ -1,0 +1,73 @@
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+body {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 20px;
+}
+
+.number_container {
+    width: 100%;
+    height: 100%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+input {
+    display: block;
+
+    font-size: 30px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    min-width: 300px;
+    max-width: 400px;
+    width: 90%;
+}
+
+input:focus {
+    outline: none;
+}
+
+button {
+    width: 300px;
+    height: 50px;
+    background-color: rgb(19, 168, 168);
+    color: #fff;
+    border: none;
+    font-size: 18px;
+    font-family: sans-serif;
+}
+
+
+.error_container{
+    position: fixed;
+    right: 30px;
+    top: 30px;
+    width: 0px;
+    height: 0px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 7px;
+
+    font-size: 18px;
+    font-family: sans-serif;
+    text-align: center;
+    line-height: 50px;
+    color: red;
+    transition: right 0.5s ease;
+}
+
+.error_container.active {
+    width: 300px;
+    height: 50px;
+}
